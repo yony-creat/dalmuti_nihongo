@@ -611,20 +611,21 @@ function playCards() {
     if(isHost) {
         doPlay(effectiveRank, totalCount, myIdx, cardIndices); // 방장은 본인 인덱스를 직접 전달
         resetSelection(); 
-    } else {
+  } else {
+        // 복잡한 검사 없이 바로 보냅니다 (이전 방식)
         conn.send({
             type: 'PLAY_REQ', 
             rank: effectiveRank, 
             count: totalCount, 
-            pIdx: myIdx,      // ★ 방장이 누구의 카드를 지울지 알기 위해 반드시 필요!
+            pIdx: myIdx,
             indices: cardIndices 
         });
-        
+
+        // 제출 후 내 화면의 선택 상태를 비웁니다.
         selectedCards = []; 
         resetSelection(); 
     }
-    }
-
+}
 function resetSelection() {
     selectedCards = []; // 데이터 비우기
     const cards = document.querySelectorAll('.card');
