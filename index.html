@@ -185,15 +185,22 @@
         c.on('data', data => handleData(data, c));
     }
 
-function handleData(data, c) {
-    switch(data.type) {
-        case 'JOIN':
-            if(isHost) {
-                players.push({id:c.peer, name:data.name, hand:[], isFinished:false});
-                updateLobby(); 
-                broadcast({type:'LOBBY', players});
-            }
-            break;
+case 'JOIN':
+            if(isHost) {
+                // 이미 목록에 있는 ID인지 확인 (중복 입장 방지)
+                const existingPlayer = players.find(p => p.id === c.peer);
+                if (!existingPlayer) {
+                    players.push({id: c.peer, name: data.name, hand: [], isFinished: false});
+                } else {
+                    // 이미 있다면 이름만 최신화
+                    existingPlayer.name = data.name;
+                }
+                
+                updateLobby(); // 방장 화면 갱신
+                broadcast({type: 'LOBBY', players}); // 모든 참가자에게 갱신된 목록 전송
+            }
+            break;
+    
         case 'LOBBY': 
             players = data.players; 
             updateLobby(); 
@@ -608,58 +615,64 @@ function resetSelection() {
         broadcast(msg);
     }
     // 결과 화면을 실제로 그려주는 함수
-    function showRoundResult() {
-        showScreen('round-result-screen');
-        const listDiv = document.getElementById('final-ranking-list');
-        listDiv.innerHTML = players.map((p, i) => {
-            let cls = (i === 0) ? 'badge-dalmuti' : (i === players.length - 1 ? 'badge-peon' : 'badge-common');
-            return `
-                <div class="role-item">
-                    <span class="rank-badge ${cls}">${i + 1}위</span>: 
-                    <b>${p.name}</b> <span style="font-size:0.8rem; color:#aaa;">(${p.role})</span>
-                </div>
-            `;
-        }).join('');
-    }
-
-    // 화면 전환 함수 (기존 코드에 없을 경우 대비)
-function showScreen(id) { 
-    // 1. 모든 스크린을 숨김
-    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); 
-    
-    // 2. 대상 ID가 존재하는지 확인 후 보여줌
-    const target = document.getElementById(id);
-    if (target) {
-        target.classList.remove('hidden');
-    } else {
-        console.error("화면 전환 오류: '" + id + "'라는 ID를 가진 엘리먼트가 없습니다.");
+function showRoundResult() {
+        showScreen('round-result-screen');
+        const listDiv = document.getElementById('final-ranking-list');
+        listDiv.innerHTML = players.map((p, i) => {
+            let cls = (i === 0) ? 'badge-dalmuti' : (i === players.length - 1 ? 'badge-peon' : 'badge-common');
+            return `
+                <div class="role-item">
+                    <span class="rank-badge ${cls}">${i + 1}위</span>: 
+                    <b>${p.name}</b> <span style="font-size:0.8rem; color:#aaa;">(${p.role})</span>
+                </div>
+            `;
+        }).join('');
     }
-}
 
-    function doPass() { 
-    const activePlayers = players.filter(p => !p.isFinished).length;
-    passCount++; 
-    
-    // 나를 제외한 모든 사람이 패스하면 바닥 청소
-    if(passCount >= activePlayers - 1) { 
-        lastPlayed = { rank: 14, count: 0 };
-        passCount = 0;
-    }
-    
-    nextTurn(); 
-}
-function passTurn() {
-        if (players[currentPlayerIdx].id !== myID) return alert("당신 차례가 아닙니다!");
-
-        if (isHost) {
-            doPass();
+    function showScreen(id) { 
+        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); 
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.remove('hidden');
         } else {
-            conn.send({ type: 'PASS_REQ' });
+            console.error("화면 전환 오류: '" + id + "' ID 없음");
         }
-    } // passTurn 끝
+    }
 
-    // 만약 위에서 닫히지 않은 괄호가 있다면 여기서 강제로 닫아줍니다.
-    // 하지만 보통은 여기서 </script>로 바로 이어지는 것이 정석입니다.
+    function doPass() { 
+        const activePlayers = players.filter(p => !p.isFinished).length;
+        passCount++; 
+        if(passCount >= activePlayers - 1) { 
+            lastPlayed = { rank: 14, count: 0 };
+            passCount = 0;
+        }
+        nextTurn(); 
+    }
+
+    function passTurn() {
+        if (players[currentPlayerIdx].id !== myID) return alert("당신 차례가 아닙니다!");
+        if (isHost) doPass();
+        else conn.send({ type: 'PASS_REQ' });
+    }
+
+    // 🚩 참가자 감지 및 연결 통로 (매우 중요!)
+    function setupConn(c) {
+        if(isHost) {
+            if (!connections.find(conn => conn.peer === c.peer)) {
+                connections.push(c);
+            }
+        }
+        
+        c.on('open', () => { 
+            // 참가자가 연결되자마자 방장에게 자신의 이름을 보냄
+            if(!isHost) {
+                c.send({type:'JOIN', name:myName}); 
+            }
+        });
+
+        c.on('data', data => handleData(data, c));
+    }
+
 </script>
 </body>
 </html>
