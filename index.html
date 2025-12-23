@@ -142,22 +142,23 @@
         <button id="tax-btn" onclick="submitTax()">카드 전달</button>
     </div>
 
-    <div id="game-board" class="screen hidden">
-        <div id="rank-board"></div>
-        <div id="turn-display" class="turn-msg"></div>
-        <div id="table-cards" class="card-container" style="min-height:120px; background:rgba(255,255,255,0.05); border-radius:10px; padding:10px;"></div>
-        <div id="my-hand" class="card-container"></div>
-        <div style="margin-top:15px;">
-            <button onclick="()">카드 내기</button>
-            <button onclick="passTurn()" style="background:#7f8c8d;">통과 (Pass)</button>
-        </div>
-<div id="round-result-screen" class="screen hidden">
-        <h2 style="color:var(--accent)">🏆 라운드 종료 🏆</h2>
-        <div id="final-ranking-list" style="margin: 20px 0;"></div>
-        <button onclick="finalizeRoles()" style="background:#2ecc71;">이 서열로 다음 판 시작</button>
-        <button onclick="location.reload()" style="background:#e74c3c;">완전 새로 시작(방 폭파)</button>
-    </div>
-    </div>
+ <div id="game-board" class="screen hidden">
+        <div id="rank-board"></div>
+        <div id="turn-display" class="turn-msg"></div>
+        <div id="table-cards" class="card-container" style="min-height:120px; background:rgba(255,255,255,0.05); border-radius:10px; padding:10px;"></div>
+        <div id="my-hand" class="card-container"></div>
+        
+        <div style="margin-top:15px;">
+            <button onclick="playCards()">카드 내기</button>
+            <button onclick="passTurn()" style="background:#7f8c8d;">통과 (Pass)</button>
+        </div>
+    </div> <div id="round-result-screen" class="screen hidden">
+        <h2 style="color:var(--accent)">🏆 라운드 종료 🏆</h2>
+        <div id="final-ranking-list" style="margin: 20px 0;"></div>
+        <button onclick="finalizeRoles()" style="background:#2ecc71;">이 서열로 다음 판 시작</button>
+        <button onclick="location.reload()" style="background:#e74c3c;">완전 새로 시작(방 폭파)</button>
+    </div>
+    
 
 <script>
     let peer, conn, connections = [];
