@@ -5,59 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>달무티 일본어 숫자</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
-   <style>
-        :root { --bg-color: #1a252f; --accent: #f1c40f; --card-bg: #ffffff; }
-     body { 
-    font-family: 'Malgun Gothic', sans-serif; 
-    background-color: #1a252f !important; /* 변수 대신 직접 색상 지정 */
-    color: white; 
-    margin: 0; 
-    padding: 10px; 
-    text-align: center; 
-    min-height: 100vh; /* 화면 전체 높이를 채우도록 설정 */
-}
-        #status-bar { padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 14px; background: #c0392b; font-weight: bold; }
-        .online { background: #27ae60 !important; }
-        .screen { 
-    background: rgba(0, 0, 0, 0.85) !important; /* 조금 더 어둡게 */
-    padding: 20px; 
-    border-radius: 15px; 
-    max-width: 500px; 
-    margin: 20px auto; 
-    border: 1px solid #34495e; 
-    box-shadow: 0 8px 30px rgba(0,0,0,0.6); 
-}
-        .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 15px; min-height: 110px; }
-     .card { 
-    width: 65px; 
-    height: 95px; 
-    background: var(--card-bg); 
-    border-radius: 8px; 
-    border: 2px solid #333; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    color: #2c3e50; 
-    font-weight: bold; 
-    font-size: 15px; /* 28px에서 15px로 줄여야 일본어가 들어갑니다 */
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); 
-    transition: transform 0.2s;
-    word-break: keep-all; /* 글자 줄바꿈 방지 */
-}
-        .card.selected { transform: translateY(-15px); border: 3px solid #e67e22; background: #fff9e6; }
-        .card.disabled { opacity: 0.6; cursor: default; background: #bdc3c7; color: #7f8c8d; }
-        #rank-board { background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 10px; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
-        .rank-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; background: #34495e; border: 1px solid var(--accent); }
-        button { padding: 12px; border-radius: 8px; border: none; background: #e67e22; color: white; font-weight: bold; cursor: pointer; margin: 5px; width: 85%; font-size: 16px; }
-        .hidden { display: none !important; }
-        input { padding: 12px; width: 80%; border-radius: 5px; border: 2px solid #34495e; font-size: 16px; margin-bottom: 10px; text-align: center; }
-        .turn-msg { font-size: 1.1rem; color: var(--accent); font-weight: bold; margin: 10px 0; }
-        .role-item { margin: 8px 0; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.1); text-align: left; border-left: 4px solid var(--accent); }
-   .badge-dalmuti { background: #f1c40f !important; color: #000; } /* 황금색 */
-    .badge-peon { background: #95a5a6 !important; } /* 회색 */
-    .badge-common { background: #34495e !important; } 
-   </style>
+  <style>
+    /* 1. 변수 및 전체 배경 설정 */
+    :root { 
+        --bg-color: #1a252f; 
+        --accent: #f1c40f; 
+        --card-bg: #ffffff; 
+    }
+    
+    html, body { 
+        background-color: #1a252f !important; 
+        color: white !important; 
+        margin: 0; 
+        padding: 0; 
+        min-height: 100vh;
+        font-family: 'Malgun Gothic', sans-serif;
+        text-align: center;
+    }
+
+    /* 2. 화면 가리기 기능 (이게 안 먹히면 대기실이 미리 보임) */
+    .hidden { display: none !important; }
+
+    /* 3. 레이아웃 (검은 판넬) */
+    .screen { 
+        background: rgba(0, 0, 0, 0.85) !important; 
+        padding: 20px; 
+        border-radius: 15px; 
+        max-width: 500px; 
+        margin: 20px auto; 
+        border: 1px solid #34495e; 
+        box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+        display: block; 
+    }
+
+    /* 4. 카드 디자인 */
+    .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 15px; min-height: 110px; }
+    .card { 
+        width: 65px; height: 95px; background: var(--card-bg); border-radius: 8px; 
+        border: 2px solid #333; cursor: pointer; display: flex; align-items: center; 
+        justify-content: center; color: #2c3e50 !important; font-weight: bold; 
+        font-size: 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s;
+        word-break: keep-all;
+    }
+    .card.selected { transform: translateY(-15px); border: 3px solid #e67e22; background: #fff9e6; }
+    .card.disabled { opacity: 0.6; cursor: default; background: #bdc3c7; color: #7f8c8d; }
+
+    /* 5. 입력창 및 버튼 */
+    input { padding: 12px; width: 80%; border-radius: 5px; border: 2px solid #34495e; font-size: 16px; margin-bottom: 10px; text-align: center; background: white; color: black; }
+    button { padding: 12px; border-radius: 8px; border: none; background: #e67e22; color: white; font-weight: bold; cursor: pointer; margin: 5px; width: 85%; font-size: 16px; }
+
+    /* 6. 기타 UI 요소 */
+    #status-bar { padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 14px; background: #c0392b; font-weight: bold; }
+    .online { background: #27ae60 !important; }
+    #rank-board { background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 10px; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
+    .rank-badge { padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; background: #34495e; border: 1px solid var(--accent); }
+    .turn-msg { font-size: 1.1rem; color: var(--accent); font-weight: bold; margin: 10px 0; }
+    .role-item { margin: 8px 0; padding: 10px; border-radius: 8px; background: rgba(255,255,255,0.1); text-align: left; border-left: 4px solid var(--accent); }
+    .badge-dalmuti { background: #f1c40f !important; color: #000; }
+    .badge-peon { background: #95a5a6 !important; }
+    .badge-common { background: #34495e !important; }
+</style>
 </head>
 <body>
     <div id="status-bar">서버 연결 중...</div>
