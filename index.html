@@ -131,19 +131,7 @@
         if (room) document.getElementById('join-id').value = room;
     };
 
-    function copyRoomLink() {
-        const link = `${window.location.origin}${window.location.pathname}?room=${myID}`;
-        navigator.clipboard.writeText(link).then(() => alert("링크가 복사되었습니다!"));
-    }
-
-    function updateLobby() {
-        const list = document.getElementById('player-list-lobby');
-        list.innerHTML = players.map(p => `<div>👤 ${p.name} ${p.id === myID ? '(나)' : ''}</div>`).join('');
-        if(isHost && players.length >= 2) {
-            document.getElementById('start-btn').classList.remove('hidden');
-        }
-    }
-function initPeer(host) {
+    function initPeer(host) {
     myName = document.getElementById('my-name').value.trim();
     if (!myName) return alert("이름을 입력하세요!");
     isHost = host;
@@ -178,6 +166,19 @@ function initPeer(host) {
 
     peer.on('connection', setupConn);
 }
+    function copyRoomLink() {
+        const link = `${window.location.origin}${window.location.pathname}?room=${myID}`;
+        navigator.clipboard.writeText(link).then(() => alert("링크가 복사되었습니다!"));
+    }
+
+    function updateLobby() {
+        const list = document.getElementById('player-list-lobby');
+        list.innerHTML = players.map(p => `<div>👤 ${p.name} ${p.id === myID ? '(나)' : ''}</div>`).join('');
+        if(isHost && players.length >= 2) {
+            document.getElementById('start-btn').classList.remove('hidden');
+        }
+    }
+
     function setupConn(c) {
         if(isHost) connections.push(c);
         c.on('open', () => { if(!isHost) c.send({type:'JOIN', name:myName}); });
