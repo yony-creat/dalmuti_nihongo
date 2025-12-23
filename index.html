@@ -3,21 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>달무티 멀티플레이</title>
+    <title>달무티 일본어 숫자</title>
     <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
    <style>
         :root { --bg-color: #1a252f; --accent: #f1c40f; --card-bg: #ffffff; }
-        body { font-family: 'Malgun Gothic', sans-serif; background-color: var(--bg-color); color: white; margin: 0; padding: 10px; text-align: center; }
+     body { 
+    font-family: 'Malgun Gothic', sans-serif; 
+    background-color: #1a252f !important; /* 변수 대신 직접 색상 지정 */
+    color: white; 
+    margin: 0; 
+    padding: 10px; 
+    text-align: center; 
+    min-height: 100vh; /* 화면 전체 높이를 채우도록 설정 */
+}
         #status-bar { padding: 10px; margin-bottom: 10px; border-radius: 8px; font-size: 14px; background: #c0392b; font-weight: bold; }
         .online { background: #27ae60 !important; }
-        .screen { background: rgba(0,0,0,0.7); padding: 20px; border-radius: 15px; max-width: 500px; margin: 10px auto; border: 1px solid #34495e; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .screen { 
+    background: rgba(0, 0, 0, 0.85) !important; /* 조금 더 어둡게 */
+    padding: 20px; 
+    border-radius: 15px; 
+    max-width: 500px; 
+    margin: 20px auto; 
+    border: 1px solid #34495e; 
+    box-shadow: 0 8px 30px rgba(0,0,0,0.6); 
+}
         .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 15px; min-height: 110px; }
-        .card { 
-            width: 65px; height: 95px; background: var(--card-bg); border-radius: 8px; 
-            border: 2px solid #333; cursor: pointer; display: flex; align-items: center; 
-            justify-content: center; color: #2c3e50; font-weight: bold; font-size: 28px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s;
-        }
+     .card { 
+    width: 65px; 
+    height: 95px; 
+    background: var(--card-bg); 
+    border-radius: 8px; 
+    border: 2px solid #333; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    color: #2c3e50; 
+    font-weight: bold; 
+    font-size: 15px; /* 28px에서 15px로 줄여야 일본어가 들어갑니다 */
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); 
+    transition: transform 0.2s;
+    word-break: keep-all; /* 글자 줄바꿈 방지 */
+}
         .card.selected { transform: translateY(-15px); border: 3px solid #e67e22; background: #fff9e6; }
         .card.disabled { opacity: 0.6; cursor: default; background: #bdc3c7; color: #7f8c8d; }
         #rank-board { background: rgba(255, 255, 255, 0.1); border-radius: 10px; padding: 10px; margin-bottom: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
@@ -594,4 +621,4 @@ function doPass() { 
 </script>
 </body>
 </html>
-여기에 숫자를 일본어 히토츠-쥬니코 로 바꿔주고, 조커는 그대로 j로 두는 코드를 만들어줘. 수정이 필요한 부분만 얘기 해줘
+
