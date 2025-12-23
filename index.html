@@ -651,23 +651,35 @@ function showRoundResult() {
     }
 
     // 🚩 참가자 감지 및 연결 통로 (매우 중요!)
-    function setupConn(c) {
-        if(isHost) {
-            if (!connections.find(conn => conn.peer === c.peer)) {
-                connections.push(c);
-            }
+ function setupConn(c) {
+    // 1. 방장이 접속을 받으면 실행되는 로직
+    if(isHost) {
+        // 이미 연결된 친구인지 확인하고, 없으면 목록에 추가
+        if (!connections.find(conn => conn.peer === c.peer)) {
+            connections.push(c);
         }
-        
-        c.on('open', () => { 
-            // 참가자가 연결되자마자 방장에게 자신의 이름을 보냄
-            if(!isHost) {
-                c.send({type:'JOIN', name:myName}); 
-            }
-        });
-
-        c.on('data', data => handleData(data, c));
     }
+    
+    // 2. 연결이 '치익-' 하고 성공적으로 연결된 순간
+    c.on('open', () => { 
+        // 참가자라면: 방장에게 "제 이름은 OOO예요!"라고 JOIN 신호를 보냄
+        if(!isHost) {
+            c.send({type:'JOIN', name:myName}); 
+        }
+    });
 
+    // 3. 데이터를 주고받는 통로 설정 (이게 handleData를 부릅니다)
+    c.on('data', data => handleData(data, c)); 
+    
+    // 4. 친구가 창을 닫았을 때 목록에서 지우기
+    c.on('close', () => {
+        if(isHost) {
+            players = players.filter(p => p.id !== c.peer);
+            updateLobby();
+            broadcast({type: 'LOBBY', players});
+        }
+    });
+}
 </script>
 </body>
 </html>
