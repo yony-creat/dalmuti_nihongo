@@ -148,7 +148,7 @@
         <div id="table-cards" class="card-container" style="min-height:120px; background:rgba(255,255,255,0.05); border-radius:10px; padding:10px;"></div>
         <div id="my-hand" class="card-container"></div>
         <div style="margin-top:15px;">
-            <button onclick="playCards()">카드 내기</button>
+            <button onclick="()">카드 내기</button>
             <button onclick="passTurn()" style="background:#7f8c8d;">통과 (Pass)</button>
         </div>
 <div id="round-result-screen" class="screen hidden">
@@ -608,7 +608,7 @@ function playCards() {
     const cardIndices = selectedCards.map(s => s.idx);
 
     if(isHost) {
-        doPlay(effectiveRank, totalCount, myIdx); // 방장은 본인 인덱스를 직접 전달
+        doPlay(effectiveRank, totalCount, myIdx, cardIndices); // 방장은 본인 인덱스를 직접 전달
         resetSelection(); 
     } else {
         conn.send({
@@ -631,7 +631,11 @@ function resetSelection() {
 }
 
  function doPlay(rank, count, pIdx, indices) { // ← 여기에 indices 추가됨
-    lastPlayed = {rank, count};
+    lastPlayed = {
+        rank: rank,
+        count: count,
+        playerIdx: pIdx
+    };
 
     // 1. 지울 카드의 번호(인덱스) 결정
     // indices가 있으면 그걸 쓰고(참가자), 없으면 selectedCards를 씁니다(방장).
