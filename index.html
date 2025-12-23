@@ -80,7 +80,8 @@
 
     <div id="lobby" class="screen hidden">
         <h3>📢 대기실</h3>
-        <button onclick="copyRoomLink()" style="background:#8e44ad; width:auto; padding:8px 15px;">🔗 초대 링크 복사</button>
+<p>방 코드: <b id="display-room-code" style="color:var(--accent); font-size:1.2rem;">-</b></p>
+        <button onclick="copyRoomLink()" style="background:#8e44ad; width:auto; padding:8px 15px;">🔗 초대 링크 복사</button>
         <div id="player-list-lobby" style="margin: 20px 0;"></div>
         <button id="start-btn" onclick="hostStartRoleDraw()" class="hidden">서열 정하기 시작</button>
     </div>
@@ -142,26 +143,41 @@
             document.getElementById('start-btn').classList.remove('hidden');
         }
     }
-    function initPeer(host) {
-        myName = document.getElementById('my-name').value.trim();
-        if (!myName) return alert("이름을 입력하세요!");
-        isHost = host;
-        peer = new Peer();
-        peer.on('open', id => {
-            myID = id;
-            document.getElementById('status-bar').innerText = isHost ? "방장이 되었습니다" : "연결됨";
-            document.getElementById('status-bar').classList.add('online');
-            if(isHost) {
-                players.push({id, name:myName, hand:[], isFinished:false});
-                showScreen('lobby'); updateLobby();
-            } else {
-                conn = peer.connect(document.getElementById('join-id').value.trim());
-                setupConn(conn);
-            }
-        });
-        peer.on('connection', setupConn);
-    }
+ function initPeer(host) {
+    myName = document.getElementById('my-name').value.trim();
+    if (!myName) return alert("이름을 입력하세요!");
+    isHost = host;
+    
+    peer = new Peer();
+    
+peer.on('open', id => {
+        myID = id;
+        
+        // 1. 상태 표시줄 업데이트 (중복 제거)
+        const statusEl = document.getElementById('status-bar');
+        statusEl.innerText = isHost ? "방장이 되었습니다" : "연결됨";
+        statusEl.classList.add('online');
+        
+        // 2. 생성된 고유 ID를 화면의 '방 코드' 자리에 표시
+        const codeDisplay = document.getElementById('display-room-code');
+        if (codeDisplay) codeDisplay.innerText = id;
 
+        if(isHost) {
+            players = [{id, name:myName, hand:[], isFinished:false}];
+            showScreen('lobby'); 
+            updateLobby();
+        } else {
+            const targetID = document.getElementById('join-id').value.trim();
+            if(!targetID) return alert("방 코드를 입력하세요!");
+            
+            conn = peer.connect(targetID);
+            setupConn(conn);
+            showScreen('lobby'); 
+        }
+    });;
+    
+    peer.on('connection', setupConn);
+}
     function setupConn(c) {
         if(isHost) connections.push(c);
         c.on('open', () => { if(!isHost) c.send({type:'JOIN', name:myName}); });
@@ -454,7 +470,7 @@ function getJapaneseRank(rank) {
         table.innerHTML = '';
         if(lastPlayed.count > 0) {
             for(let i=0; i<lastPlayed.count; i++) {
-                table.innerHTML += `<div class="card">${lastPlayed.rank===13?'J':lastPlayed.rank}</div>`;
+                table.innerHTML += `<div class="card">${getJapaneseRank(lastPlayed.rank)}</div>`;
             }
         } else {
             // 바닥이 비었을 때 시각적 안내 추가
@@ -465,7 +481,7 @@ function getJapaneseRank(rank) {
     function renderHand(cid, hand, active) {
         const cont = document.getElementById(cid); cont.innerHTML = '';
         hand.forEach((r, i) => {
-            const c = document.createElement('div'); c.className = 'card'; c.innerText = (r===13?'J':r);
+            const c = document.createElement('div'); c.className = 'card'; c.innerText = getJapaneseRank(r);
             c.onclick = () => { if(active) { c.classList.toggle('selected'); const si = selectedCards.findIndex(s=>s.idx===i); if(si>-1) selectedCards.splice(si,1); else selectedCards.push({rank:r, idx:i}); }};
             cont.appendChild(c);
         });
@@ -604,16 +620,20 @@ function resetSelection() {
     }
 
     // 화면 전환 함수 (기존 코드에 없을 경우 대비)
-    function showScreen(id) { 
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); 
-        document.getElementById(id).classList.remove('hidden'); 
-    } 
-    function passTurn() { 
-    if(isHost) doPass(); 
-    else conn.send({type:'PASS_REQ'}); 
+function showScreen(id) { 
+    // 1. 모든 스크린을 숨김
+    document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); 
+    
+    // 2. 대상 ID가 존재하는지 확인 후 보여줌
+    const target = document.getElementById(id);
+    if (target) {
+        target.classList.remove('hidden');
+    } else {
+        console.error("화면 전환 오류: '" + id + "'라는 ID를 가진 엘리먼트가 없습니다.");
+    }
 }
 
-function doPass() { 
+    function doPass() { 
     const activePlayers = players.filter(p => !p.isFinished).length;
     passCount++; 
     
@@ -625,6 +645,17 @@ function doPass() { 
     
     nextTurn(); 
 }
+function passTurn() {
+    const isMyTurn = players[currentPlayerIdx].id === myID;
+    if (!isMyTurn) return alert("당신 차례가 아닙니다!");
+
+    if (isHost) {
+        doPass();
+    } else {
+        conn.send({ type: 'PASS_REQ' });
+    }
+}
+
 </script>
 </body>
 </html>
