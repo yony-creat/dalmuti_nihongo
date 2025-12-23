@@ -71,7 +71,7 @@
 
     <div id="setup" class="screen">
         <h2 style="color:var(--accent)">🏰 달무티</h2>
-        <input type="text" id="my-name" placeholder="닉네임 입력" maxlength="8">
+        <input type="text" id="name-input" placeholder="닉네임 입력" maxlength="8">
         <button onclick="initPeer(true)">방 만들기 (방장)</button>
         <hr style="border:0.5px solid #444; margin:15px 0;">
         <input type="text" id="join-id" placeholder="방 코드가 자동 입력됩니다">
@@ -132,7 +132,7 @@
     };
 
     function initPeer(host) {
-    myName = document.getElementById('my-name').value.trim();
+    myName = document.getElementById('name-input').value.trim();
     if (!myName) return alert("이름을 입력하세요!");
     isHost = host;
     
