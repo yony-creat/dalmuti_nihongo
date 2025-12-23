@@ -647,17 +647,17 @@ function showScreen(id) {
     nextTurn(); 
 }
 function passTurn() {
-    const isMyTurn = players[currentPlayerIdx].id === myID;
-    if (!isMyTurn) return alert("당신 차례가 아닙니다!");
+        if (players[currentPlayerIdx].id !== myID) return alert("당신 차례가 아닙니다!");
 
-    if (isHost) {
-        doPass();
-    } else {
-        conn.send({ type: 'PASS_REQ' });
-    }
-}
+        if (isHost) {
+            doPass();
+        } else {
+            conn.send({ type: 'PASS_REQ' });
+        }
+    } // passTurn 끝
 
+    // 만약 위에서 닫히지 않은 괄호가 있다면 여기서 강제로 닫아줍니다.
+    // 하지만 보통은 여기서 </script>로 바로 이어지는 것이 정석입니다.
 </script>
 </body>
 </html>
-
