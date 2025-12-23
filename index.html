@@ -40,12 +40,51 @@
 
     /* 4. 카드 디자인 */
     .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 15px; min-height: 110px; }
+/* 1. 기본 카드 스타일 (두 줄 정렬을 위한 핵심 수정본) */
     .card { 
-        width: 65px; height: 95px; background: var(--card-bg); border-radius: 8px; 
-        border: 2px solid #333; cursor: pointer; display: flex; align-items: center; 
-        justify-content: center; color: #2c3e50 !important; font-weight: bold; 
-        font-size: 15px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s;
+        width: 65px; 
+        height: 95px; 
+        background: var(--card-bg); 
+        border-radius: 8px; 
+        border: 2px solid #333; 
+        cursor: pointer; 
+        
+        display: flex; 
+        flex-direction: column;   /* 위아래로 쌓이게 설정 */
+        align-items: center; 
+        justify-content: center; 
+        
+        color: #2c3e50 !important; 
+        font-weight: bold; 
+        font-size: 15px; 
+        line-height: 1.1;         /* 줄 간격을 좁게 */
+        text-align: center;
+        
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.3); 
+        transition: transform 0.2s;
         word-break: keep-all;
+    }
+
+    /* 2. 카드를 클릭했을 때 위로 올라가는 효과 (그대로 유지) */
+    .card.selected { 
+        transform: translateY(-15px); 
+        border: 3px solid #e67e22; 
+        background: #fff9e6; 
+    }
+
+    /* 3. 비활성화된 카드 스타일 (그대로 유지) */
+    .card.disabled { 
+        opacity: 0.6; 
+        cursor: default; 
+        background: #bdc3c7; 
+        color: #7f8c8d; 
+    }
+
+    /* 4. 추가: 11, 12번 밑에 붙는 작은 글씨용 */
+    .card small {
+        font-size: 11px;
+        margin-top: 2px;
+        font-weight: normal;
     }
     .card.selected { transform: translateY(-15px); border: 3px solid #e67e22; background: #fff9e6; }
     .card.disabled { opacity: 0.6; cursor: default; background: #bdc3c7; color: #7f8c8d; }
