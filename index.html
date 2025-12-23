@@ -257,6 +257,28 @@ case 'JOIN':
                 }
             }
             break;
+
+      case 'ACTION':
+    // 방장님의 updateUI는 'lastPlayed' 변수를 사용하므로 이름을 맞춰줍니다.
+    lastPlayed = {
+        rank: data.rank,
+        count: data.count,
+        playerIdx: data.playerIdx
+    };
+    
+    // 차례 정보 업데이트 (방장님 코드에 맞게 currentPlayerIdx 사용)
+    currentPlayerIdx = (currentPlayerIdx + 1) % players.length;
+    
+    // 화면 새로고침
+    updateUI();
+    updateStatusBar();
+    break;
+
+case 'PASS':
+    // 통과했을 때 처리
+    currentTurnIdx = (currentTurnIdx + 1) % players.length;
+    updateStatus();
+    break;
         case 'PASS_REQ': 
             if(isHost) doPass(); 
             break;
@@ -441,12 +463,24 @@ function submitTax() {
 
   // 숫자 -> 일본어 읽기 변환 함수
 function getJapaneseRank(rank) {
-    if (rank === 13) return 'J'; // 데이터가 13이면 화면엔 J
+    if (rank === 13) return 'J'; // 조커 처리
+
     const counts = {
-        1: "ひとつ", 2: "ふたつ", 3: "みっつ", 4: "よっつ", 5: "いつつ",
-        6: "むっつ", 7: "ななつ", 8: "やっつ", 9: "ここのつ", 10: "とお",
-        11: "じゅういっこ", 12: "じゅうにこ"
+        1: "ひとつ", 
+        2: "ふたつ", 
+        3: "みっつ", 
+        4: "よっつ", 
+        5: "いつつ",
+        6: "むっつ", 
+        7: "ななつ", 
+        8: "やっつ", 
+        9: "ここのつ", 
+        10: "とお",
+        // <br>을 넣어주셨으니 이제 위아래 두 줄로 나옵니다!
+        11: "じゅう<br><small>いっこ</small>", 
+        12: "じゅう<br><small>にこ</small>"
     };
+
     return counts[rank] || rank;
 }
     function updateUI() {
@@ -575,6 +609,17 @@ function resetSelection() {
     }
     
     passCount = 0; 
+
+     1. 방장이 받은 정보를 '방송'해서 모든 참가자 화면에 카드가 뜨게 함
+    broadcast({
+        type: 'ACTION',
+        rank: rank,
+        count: count,
+        playerIdx: pIdx
+    });
+
+    // 2. 방장 화면도 즉시 갱신 (바닥에 카드 그림 그리기)
+    updateUI();
     nextTurn();
 }
     function nextTurn() {
