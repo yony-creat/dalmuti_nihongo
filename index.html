@@ -273,7 +273,12 @@ case 'JOIN':
     updateUI();
     updateStatusBar();
     break;
-
+            
+case 'PLAYER_FINISHED':
+            // 참가자 화면에서도 탈출 알림창을 띄웁니다.
+            alert(`🎊 ${data.name}님이 ${data.rank}등으로 탈출하셨습니다! 🎊`);
+            break;
+            
 case 'PASS':
     // 통과했을 때 처리
     currentTurnIdx = (currentTurnIdx + 1) % players.length;
@@ -518,7 +523,7 @@ function getJapaneseRank(rank) {
     function renderHand(cid, hand, active) {
         const cont = document.getElementById(cid); cont.innerHTML = '';
         hand.forEach((r, i) => {
-            const c = document.createElement('div'); c.className = 'card'; c.innerText = getJapaneseRank(r);
+            const c = document.createElement('div'); c.className = 'card'; c.innerHTML = getJapaneseRank(r);
             c.onclick = () => { if(active) { c.classList.toggle('selected'); const si = selectedCards.findIndex(s=>s.idx===i); if(si>-1) selectedCards.splice(si,1); else selectedCards.push({rank:r, idx:i}); }};
             cont.appendChild(c);
         });
@@ -601,26 +606,35 @@ function resetSelection() {
     // ✨ 선택된 목록 비우기 (방장 전용)
     selectedCards = []; 
     
-    // 3. 탈출 처리
-    if(players[pIdx].hand.length === 0 && !players[pIdx].isFinished) {
-        players[pIdx].isFinished = true;
-        finishOrder.push(players[pIdx]);
-        alert(`🎊 ${players[pIdx].name}님 ${finishOrder.length}등으로 탈출! 🎊`);
-    }
-    
-    passCount = 0; 
+ // 3. 탈출 처리 (모든 사람이 알 수 있게 정보를 준비합니다)
+    let finishedInfo = null;
+    if(players[pIdx].hand.length === 0 && !players[pIdx].isFinished) {
+        players[pIdx].isFinished = true;
+        finishOrder.push(players[pIdx]);
+        
+        // 참가자들에게 보낼 탈출 정보 생성
+        finishedInfo = {
+            name: players[pIdx].name,
+            rank: finishOrder.length
+        };
+        
+        alert(`🎊 ${players[pIdx].name}님 ${finishOrder.length}등으로 탈출! 🎊`);
+    }
+    
+    passCount = 0; 
 
-    // 1. 방장이 받은 정보를 '방송'해서 모든 참가자 화면에 카드가 뜨게 함
+    // 📢 방송할 때 탈출 정보(finishedInfo)를 함께 보냅니다.
     broadcast({
         type: 'ACTION',
         rank: rank,
         count: count,
-        playerIdx: pIdx
+        playerIdx: pIdx,
+        finishedInfo: finishedInfo // 탈출한 사람이 있으면 정보가 담기고, 없으면 null
     });
 
-    // 2. 방장 화면도 즉시 갱신 (바닥에 카드 그림 그리기)
+    // 2. 방장 화면도 즉시 갱신
     updateUI();
-    nextTurn();
+    nextTurn();
 }
     function nextTurn() {
         const activePlayers = players.filter(p => !p.isFinished);
