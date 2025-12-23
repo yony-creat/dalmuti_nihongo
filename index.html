@@ -179,12 +179,6 @@
         }
     }
 
-    function setupConn(c) {
-        if(isHost) connections.push(c);
-        c.on('open', () => { if(!isHost) c.send({type:'JOIN', name:myName}); });
-        c.on('data', data => handleData(data, c));
-    }
-
 case 'JOIN':
             if(isHost) {
                 // 이미 목록에 있는 ID인지 확인 (중복 입장 방지)
