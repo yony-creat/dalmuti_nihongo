@@ -41,29 +41,31 @@
     /* 4. 카드 디자인 */
     .card-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 15px; min-height: 110px; }
 /* 1. 기본 카드 스타일 (두 줄 정렬을 위한 핵심 수정본) */
-    .card { 
-        width: 65px; 
-        height: 95px; 
-        background: var(--card-bg); 
-        border-radius: 8px; 
-        border: 2px solid #333; 
-        cursor: pointer; 
-        
-        display: flex; 
-        flex-direction: column;   /* 위아래로 쌓이게 설정 */
-        align-items: center; 
-        justify-content: center; 
-        
-        color: #2c3e50 !important; 
-        font-weight: bold; 
-        font-size: 15px; 
-        line-height: 1.1;         /* 줄 간격을 좁게 */
-        text-align: center;
-        
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.3); 
-        transition: transform 0.2s;
-        word-break: keep-all;
-    }
+.card { 
+    width: 65px; 
+    height: 95px; 
+    background: var(--card-bg); 
+    border-radius: 8px; 
+    border: 2px solid #333; 
+    cursor: pointer; 
+    
+    /* 🚩 PC에서 두 줄로 나오게 하는 핵심 설정 */
+    display: flex !important; 
+    flex-direction: column !important; /* 안의 내용물을 무조건 위아래로 쌓음 */
+    justify-content: center;           /* 세로 중앙 정렬 */
+    align-items: center;               /* 가로 중앙 정렬 */
+    
+    white-space: normal !important;    /* 🚩 줄바꿈(br)을 절대 무시하지 마라 */
+    line-height: 1.2;                  /* 줄 간격 조절 */
+    text-align: center;
+    word-break: break-all;             /* 필요시 글자 단위로 쪼갬 */
+    
+    color: #2c3e50 !important; 
+    font-weight: bold; 
+    font-size: 15px; 
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3); 
+    transition: transform 0.2s;
+}
 
     /* 2. 카드를 클릭했을 때 위로 올라가는 효과 (그대로 유지) */
     .card.selected { 
@@ -82,7 +84,7 @@
 
     /* 4. 추가: 11, 12번 밑에 붙는 작은 글씨용 */
     .card small {
-        font-size: 11px;
+        font-size: 15px;
         margin-top: 2px;
         font-weight: normal;
     }
