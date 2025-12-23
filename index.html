@@ -143,17 +143,17 @@
             document.getElementById('start-btn').classList.remove('hidden');
         }
     }
- function initPeer(host) {
+function initPeer(host) {
     myName = document.getElementById('my-name').value.trim();
     if (!myName) return alert("이름을 입력하세요!");
     isHost = host;
     
     peer = new Peer();
     
-peer.on('open', id => {
+    peer.on('open', id => {
         myID = id;
         
-        // 1. 상태 표시줄 업데이트 (중복 제거)
+        // 1. 상태 표시줄 업데이트
         const statusEl = document.getElementById('status-bar');
         statusEl.innerText = isHost ? "방장이 되었습니다" : "연결됨";
         statusEl.classList.add('online');
@@ -174,8 +174,8 @@ peer.on('open', id => {
             setupConn(conn);
             showScreen('lobby'); 
         }
-    });;
-    
+    });
+
     peer.on('connection', setupConn);
 }
     function setupConn(c) {
