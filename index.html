@@ -178,7 +178,8 @@
             document.getElementById('start-btn').classList.remove('hidden');
         }
     }
-
+function handleData(data, c) {
+    switch(data.type) {
 case 'JOIN':
             if(isHost) {
                 // 이미 목록에 있는 ID인지 확인 (중복 입장 방지)
